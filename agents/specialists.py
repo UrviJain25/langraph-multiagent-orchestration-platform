@@ -91,6 +91,7 @@ def execute_agent(
             "messages": [message],
             "final_output": {output_key: response},
             "status": "completed",
+            "current_agent": agent_name,
             "ended_at": datetime.now(timezone.utc),
         }
 
@@ -119,6 +120,7 @@ def execute_agent(
             "messages": [message],
             "status": "failed",
             "error": str(e),
+            "current_agent": agent_name,
             "ended_at": datetime.now(timezone.utc),
         }
 

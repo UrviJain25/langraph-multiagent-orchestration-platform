@@ -38,16 +38,19 @@ def review_router(state: SharedState):
     if state.error:
         return "recovery"
 
+    # Route to approval checkpoint if the workflow requires human sign-off
+    if state.requires_approval:
+        return "approval"
+
     return "writer"
 
 
 def recovery_router(state: SharedState):
 
-    # Safe fallback routing
-    if state.next_agent:
-        return state.next_agent
-
-    return "writer"
+    # current_agent is now set by each specialist on both success and failure,
+    # so recovery can retry the exact agent that failed.
+    agent = state.current_agent or state.next_agent or "writer"
+    return agent
 
 
 def build_graph():
@@ -56,17 +59,11 @@ def build_graph():
 
     # Nodes
     graph.add_node("supervisor", supervisor_node)
-
     graph.add_node("researcher", researcher_node)
-
     graph.add_node("coder", coder_node)
-
     graph.add_node("reviewer", reviewer_node)
-
     graph.add_node("writer", writer_node)
-
     graph.add_node("recovery", recovery_node)
-
     graph.add_node("approval", approval_node)
 
     # Entry point
@@ -84,10 +81,10 @@ def build_graph():
         }
     )
 
-    # Research Flow
+    # Research Flow — ends immediately
     graph.add_edge("researcher", END)
 
-    # Coding Flow
+    # Coding Flow — coder → recovery check → reviewer
     graph.add_conditional_edges(
         "coder",
         should_recover,
@@ -97,27 +94,32 @@ def build_graph():
         }
     )
 
-    # Review Flow
+    # Review Flow — reviewer → recovery / approval checkpoint / writer
     graph.add_conditional_edges(
         "reviewer",
         review_router,
         {
             "recovery": "recovery",
+            "approval": "approval",
             "writer": "writer"
         }
     )
 
-    # Writer Ends Workflow
+    # Approval pauses execution; the API resumes it by manually calling writer_node
+    graph.add_edge("approval", END)
+
+    # Writer ends the workflow
     graph.add_edge("writer", END)
 
-    # Recovery Routing
+    # Recovery retries the agent that originally failed
     graph.add_conditional_edges(
         "recovery",
         recovery_router,
         {
             "coder": "coder",
             "reviewer": "reviewer",
-            "writer": "writer"
+            "writer": "writer",
+            "researcher": "researcher",
         }
     )
 
@@ -128,24 +130,21 @@ def build_graph():
 orchestrator = build_graph()
 
 
-def run(user_request: str):
+def run(user_request: str, request_id: str = None):
 
-    initial_state = SharedState(
-        user_request=user_request
-    )
+    kwargs: dict = {"user_request": user_request}
+    if request_id:
+        kwargs["request_id"] = request_id
+
+    initial_state = SharedState(**kwargs)
 
     try:
 
-        # Execute Workflow
         result = orchestrator.invoke(initial_state)
-
-        # Convert to SharedState
         final_state = SharedState(**result)
 
-        # Persist Workflow
         persist_state(final_state)
 
-        # Success Metric
         if final_state.status == "completed":
             workflow_success.inc()
 
@@ -153,7 +152,5 @@ def run(user_request: str):
 
     except Exception as e:
 
-        # Failure Metric
         workflow_failure.inc()
-
         raise e
