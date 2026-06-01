@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Workflow Dashboard</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="sidebar-header">
+        <h2>Workflows</h2>
+
+        <button id="newWorkflowBtn">
+          + New
+        </button>
+      </div>
+
+      <div
+        id="workflowList"
+        class="workflow-list"
+      ></div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <div class="top-section">
+
+        <h1>Workflow Console</h1>
+
+        <div class="query-box">
+
+          <textarea
+            id="queryInput"
+            placeholder="Describe your workflow..."
+          ></textarea>
+
+          <button id="startBtn">
+            Start Workflow
+          </button>
+
+        </div>
+
+      </div>
+
+      <div
+        id="workflowSection"
+        class="workflow-section hidden"
+      >
+
+        <div class="workflow-top">
+
+          <div>
+            <h2 id="workflowTitle">
+              Workflow
+            </h2>
+
+            <p id="requestIdText"></p>
+          </div>
+
+          <div
+            id="statusBadge"
+            class="status-badge"
+          >
+            pending
+          </div>
+
+        </div>
+
+        <div class="grid">
+
+          <div class="card">
+            <h3>Status</h3>
+            <p id="statusText">-</p>
+          </div>
+
+          <div class="card">
+            <h3>Approval</h3>
+            <p id="approvalStatus">-</p>
+          </div>
+
+          <div class="card">
+            <h3>Retries</h3>
+            <p id="retryCount">0</p>
+          </div>
+
+        </div>
+
+        <div class="output-card">
+
+          <h3>Final Output</h3>
+
+          <pre id="finalOutput">
+No output yet
+          </pre>
+
+        </div>
+
+        <div class="output-card">
+
+          <h3>Error</h3>
+
+          <pre id="errorOutput">
+No errors
+          </pre>
+
+        </div>
+
+        <div class="actions">
+
+          <button
+            id="approveBtn"
+            class="approve-btn"
+          >
+            Approve
+          </button>
+
+          <button
+            id="rejectBtn"
+            class="reject-btn"
+          >
+            Reject
+          </button>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

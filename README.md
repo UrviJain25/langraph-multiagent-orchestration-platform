@@ -189,6 +189,12 @@ http://127.0.0.1:8000/metrics
 pytest
 ```
 
+# Load Testing
+
+```bash
+cd load_testing
+locust
+```
 
 ---
 
