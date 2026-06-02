@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\Urvi\\\\Downloads\\\\langraph-multiagent-orchestration-platform\" -Recurse -Depth 2)",
+      "Bash(Select-Object FullName)",
+      "Bash(mkdir -p \"c:/Users/Urvi/Downloads/langraph-multiagent-orchestration-platform/frontend/src/components/WorkflowExecution\")",
+      "Bash(rm -f \"c:/Users/Urvi/Downloads/langraph-multiagent-orchestration-platform/frontend/app.js\" \"c:/Users/Urvi/Downloads/langraph-multiagent-orchestration-platform/frontend/style.css\")",
+      "Bash(npm install *)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Urvi\\Downloads\\langraph-multiagent-orchestration-platform\\frontend\\src\\components",
+      "c:\\Users\\Urvi\\Downloads\\langraph-multiagent-orchestration-platform\\frontend"
+    ]
+  }
+}
