@@ -197,6 +197,12 @@ locust
 ```
 
 ---
+# Frontend
+```bash
+cd frontend
+npm run dev
+```
+
 
 # Contributors
 
